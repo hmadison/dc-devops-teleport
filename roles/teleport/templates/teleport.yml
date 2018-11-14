@@ -1,0 +1,10 @@
+---
+teleport:
+  nodename: graviton-auth
+  data_dir: /var/lib/teleport
+auth_service:
+  enabled: "yes"
+ssh_service:
+  enabled: "yes"
+proxy_service:
+  enabled: "yes"

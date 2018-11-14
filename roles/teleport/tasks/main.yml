@@ -1,0 +1,41 @@
+---
+- name: Download the OSS teleport package
+  unarchive:
+    src: "https://get.gravitational.com/teleport-v3.0.1-linux-amd64-bin.tar.gz"
+    dest: /tmp
+    remote_src: true
+
+- name: Move teleport binaries
+  copy:
+    src: "/tmp/teleport/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    mode: 0755
+    remote_src: yes
+  with_items:
+    - tctl
+    - teleport
+    - tsh
+
+- name: Make state directory
+  file:
+    path: /var/lib/teleport
+    state: directory
+
+- name: Copy systemd unit
+  template:
+    src: teleport.service
+    dest: /etc/systemd/system/teleport.service
+
+- name: Copy teleport config
+  template:
+    src: teleport.yml
+    dest: /etc/teleport.yml
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: Start Teleport
+  systemd:
+    service: teleport
+    state: started
